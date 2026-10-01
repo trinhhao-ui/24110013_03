@@ -36,7 +36,7 @@ public class VideoAdminController_24110013 extends HttpServlet {
             return false;
         }
         User_24110013 user = (User_24110013) session.getAttribute("account");
-        if (!user.getAdmin()) {
+        if (!Boolean.TRUE.equals(user.getAdmin())) {
             resp.sendRedirect(req.getContextPath() + "/login?error=access_denied");
             return false;
         }
@@ -147,6 +147,8 @@ public class VideoAdminController_24110013 extends HttpServlet {
         String poster = req.getParameter("poster");
         String description = req.getParameter("description");
         String viewsStr = req.getParameter("views");
+        String priceStr = req.getParameter("price");
+        String quantityStr = req.getParameter("quantity");
         boolean active = req.getParameter("active") != null;
         int categoryId = Integer.parseInt(req.getParameter("categoryId"));
 
@@ -165,12 +167,26 @@ public class VideoAdminController_24110013 extends HttpServlet {
             views = Integer.parseInt(viewsStr);
         } catch (Exception ignored) {}
 
+        double price = 150000.0;
+        try {
+            if (priceStr != null && !priceStr.trim().isEmpty()) {
+                price = Double.parseDouble(priceStr.trim());
+            }
+        } catch (Exception ignored) {}
+
+        int quantity = 20;
+        try {
+            if (quantityStr != null && !quantityStr.trim().isEmpty()) {
+                quantity = Integer.parseInt(quantityStr.trim());
+            }
+        } catch (Exception ignored) {}
+
         if (poster == null || poster.trim().isEmpty()) {
             poster = "https://picsum.photos/400/250?random=" + System.currentTimeMillis() % 1000;
         }
 
         Category_24110013 category = categoryService.findById(categoryId);
-        Video_24110013 video = new Video_24110013(videoId, title, poster, views, description, active, category);
+        Video_24110013 video = new Video_24110013(videoId, title, poster, views, description, active, price, quantity, category);
         videoService.insert(video);
 
         resp.sendRedirect(req.getContextPath() + "/admin/videos?msg=added");
@@ -182,6 +198,8 @@ public class VideoAdminController_24110013 extends HttpServlet {
         String poster = req.getParameter("poster");
         String description = req.getParameter("description");
         String viewsStr = req.getParameter("views");
+        String priceStr = req.getParameter("price");
+        String quantityStr = req.getParameter("quantity");
         boolean active = req.getParameter("active") != null;
         int categoryId = Integer.parseInt(req.getParameter("categoryId"));
 
@@ -193,6 +211,16 @@ public class VideoAdminController_24110013 extends HttpServlet {
             }
             try {
                 video.setViews(Integer.parseInt(viewsStr));
+            } catch (Exception ignored) {}
+            try {
+                if (priceStr != null && !priceStr.trim().isEmpty()) {
+                    video.setPrice(Double.parseDouble(priceStr.trim()));
+                }
+            } catch (Exception ignored) {}
+            try {
+                if (quantityStr != null && !quantityStr.trim().isEmpty()) {
+                    video.setQuantity(Integer.parseInt(quantityStr.trim()));
+                }
             } catch (Exception ignored) {}
             video.setDescription(description);
             video.setActive(active);

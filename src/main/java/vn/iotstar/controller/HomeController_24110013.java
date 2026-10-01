@@ -35,7 +35,7 @@ public class HomeController_24110013 extends HttpServlet {
         int pageSize = 3; // Phân trang 3 video / trang theo Câu 4
 
         for (Category_24110013 cat : categories) {
-            if (!cat.getStatus()) continue;
+            if (!Boolean.TRUE.equals(cat.getStatus())) continue;
 
             // Câu 5: Đếm số lượng Video theo từng Category
             long totalVideos = categoryService.countVideosByCategoryId(cat.getCategoryId());

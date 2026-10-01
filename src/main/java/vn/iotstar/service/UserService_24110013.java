@@ -41,7 +41,7 @@ public class UserService_24110013 implements IUserService_24110013 {
     @Override
     public User_24110013 login(String username, String password) {
         User_24110013 user = userDao.checkLogin(username, password);
-        if (user != null && user.getActive()) {
+        if (user != null && Boolean.TRUE.equals(user.getActive())) {
             return user;
         }
         return null;

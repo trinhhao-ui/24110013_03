@@ -6,6 +6,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><sitemesh:write property='title'>Quản Trị Hệ Thống - WebVideo</sitemesh:write></title>
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,&lt;svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'&gt;&lt;circle cx='50' cy='50' r='50' fill='%23ff4757'/&gt;&lt;polygon points='40,30 40,70 75,50' fill='%23ffffff'/&gt;&lt;/svg&gt;">
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
@@ -100,15 +102,21 @@
                     </div>
                     <ul class="nav flex-column">
                         <li class="nav-item">
-                            <a class="nav-link ${pageContext.request.requestURI.endsWith('/videos') ? 'active' : ''}" 
+                            <a class="nav-link ${pageContext.request.servletPath eq '/admin/videos' or pageContext.request.servletPath eq '/admin/video/edit' ? 'active' : ''}" 
                                href="${pageContext.request.contextPath}/admin/videos">
                                 <i class="fa-solid fa-video me-2"></i> Quản lý Videos
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link ${pageContext.request.requestURI.endsWith('/add') ? 'active' : ''}" 
+                            <a class="nav-link ${pageContext.request.servletPath eq '/admin/video/add' ? 'active' : ''}" 
                                href="${pageContext.request.contextPath}/admin/video/add">
                                 <i class="fa-solid fa-plus-circle me-2"></i> Thêm Video Mới
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link ${pageContext.request.servletPath eq '/admin/orders' or pageContext.request.servletPath eq '/admin/order-detail' ? 'active' : ''}" 
+                               href="${pageContext.request.contextPath}/admin/orders">
+                                <i class="fa-solid fa-boxes-packing me-2"></i> Quản lý Đơn hàng (COD)
                             </a>
                         </li>
                         <hr class="text-secondary mx-3">
@@ -135,9 +143,9 @@
                 <div class="col-md-6 text-md-start mb-2 mb-md-0">
                     <p class="footer-info mb-1">
                         <i class="fa-solid fa-user-gear me-2 text-danger"></i>
-                        Họ tên: <strong>Trịnh Văn Phú Hào</strong> | MSSV: <strong>24110013</strong>
+                        Họ tên: <strong>Trịnh Văn Phú Hào</strong> | MSSV: <strong>24110013</strong> | Mã đề: <strong>03</strong>
                     </p>
-                    <small class="text-secondary">Trang Quản Trị Hệ Thống | Môn Lập Trình Web</small>
+                    <small class="text-secondary">Trang Quản Trị Hệ Thống | Môn Lập Trình Web (Jakarta EE + JPA + Tomcat 10)</small>
                 </div>
                 <div class="col-md-6 text-md-end">
                     <span class="badge-exam">

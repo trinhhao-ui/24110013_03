@@ -28,6 +28,12 @@ public class Video_24110013 implements Serializable {
     @Column(name = "Active")
     private Boolean active = true;
 
+    @Column(name = "Price")
+    private Double price = 150000.0;
+
+    @Column(name = "Quantity")
+    private Integer quantity = 20;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "CategoryId", nullable = false)
     private Category_24110013 category;
@@ -48,6 +54,20 @@ public class Video_24110013 implements Serializable {
         this.views = views;
         this.description = description;
         this.active = active;
+        this.category = category;
+        this.price = 150000.0;
+        this.quantity = 20;
+    }
+
+    public Video_24110013(String videoId, String title, String poster, Integer views, String description, Boolean active, Double price, Integer quantity, Category_24110013 category) {
+        this.videoId = videoId;
+        this.title = title;
+        this.poster = poster;
+        this.views = views;
+        this.description = description;
+        this.active = active;
+        this.price = price != null ? price : 150000.0;
+        this.quantity = quantity != null ? quantity : 20;
         this.category = category;
     }
 
@@ -121,5 +141,21 @@ public class Video_24110013 implements Serializable {
 
     public void setShares(List<Share_24110013> shares) {
         this.shares = shares;
+    }
+
+    public Double getPrice() {
+        return price != null ? price : 150000.0;
+    }
+
+    public void setPrice(Double price) {
+        this.price = price;
+    }
+
+    public Integer getQuantity() {
+        return quantity != null ? quantity : 0;
+    }
+
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
     }
 }

@@ -5,7 +5,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đăng Nhập - WebVideo (Đề 03)</title>
+    <title>Đăng Nhập - WebVideo - Trịnh Văn Phú Hào (24110013)</title>
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,&lt;svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'&gt;&lt;circle cx='50' cy='50' r='50' fill='%23ff4757'/&gt;&lt;polygon points='40,30 40,70 75,50' fill='%23ffffff'/&gt;&lt;/svg&gt;">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
@@ -99,6 +101,31 @@
                 <i class="fa-solid fa-lock me-1"></i> Vui lòng đăng nhập để tiếp tục!
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
+        </c:if>
+
+        <!-- Trạng thái nếu đã đăng nhập trước đó -->
+        <c:if test="${not empty sessionScope.account}">
+            <div class="card bg-light border-0 p-3 mb-3 text-center">
+                <div class="mb-2">
+                    <i class="fa-solid fa-circle-user text-primary fa-2x"></i>
+                </div>
+                <h6 class="mb-1 fw-bold text-dark">${sessionScope.account.fullname}</h6>
+                <div class="small text-muted mb-3">@${sessionScope.account.username} (${sessionScope.account.admin ? 'Administrator' : 'Khách hàng'})</div>
+                <div class="d-flex gap-2 justify-content-center flex-wrap">
+                    <a href="${pageContext.request.contextPath}/home" class="btn btn-sm btn-primary">
+                        <i class="fa-solid fa-house me-1"></i> Vào Trang Chủ
+                    </a>
+                    <c:if test="${sessionScope.account.admin}">
+                        <a href="${pageContext.request.contextPath}/admin/videos" class="btn btn-sm btn-danger">
+                            <i class="fa-solid fa-shield-halved me-1"></i> Quản Trị Admin
+                        </a>
+                    </c:if>
+                    <a href="${pageContext.request.contextPath}/logout" class="btn btn-sm btn-outline-danger">
+                        <i class="fa-solid fa-right-from-bracket me-1"></i> Đăng xuất
+                    </a>
+                </div>
+            </div>
+            <div class="text-center text-muted small mb-2">Hoặc đăng nhập với tài khoản khác:</div>
         </c:if>
 
         <form action="${pageContext.request.contextPath}/login" method="post">

@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -154,6 +155,12 @@
                                     <strong>Category name:</strong> ${catItem.category.categoryname}
                                 </div>
                                 <div>
+                                    <strong>Giá:</strong> <span class="text-danger fw-bold"><fmt:formatNumber value="${vItem.video.price}" pattern="#,##0"/> ₫</span>
+                                </div>
+                                <div>
+                                    <strong>Tồn kho:</strong> <span class="badge ${vItem.video.quantity > 0 ? 'bg-success' : 'bg-danger'}">${vItem.video.quantity > 0 ? vItem.video.quantity : 'Hết hàng'}</span>
+                                </div>
+                                <div>
                                     <strong>View:</strong> ${vItem.video.views}
                                 </div>
                                 <div>
@@ -165,6 +172,15 @@
                                     <a href="${pageContext.request.contextPath}/video-detail?id=${vItem.video.videoId}" class="action-link">
                                         Like(${vItem.likeCount})
                                     </a>
+                                </div>
+                                <div class="mt-2 pt-2 border-top">
+                                    <form action="${pageContext.request.contextPath}/cart/add" method="post" class="d-inline">
+                                        <input type="hidden" name="videoId" value="${vItem.video.videoId}">
+                                        <input type="hidden" name="quantity" value="1">
+                                        <button type="submit" class="btn btn-outline-danger btn-sm w-100" ${vItem.video.quantity <= 0 ? 'disabled' : ''}>
+                                            <i class="fa-solid fa-cart-plus me-1"></i>Thêm vào giỏ
+                                        </button>
+                                    </form>
                                 </div>
                             </td>
                         </c:forEach>

@@ -5,7 +5,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Xác Thực Mã OTP - WebVideo (Đề 03)</title>
+    <title>Xác Thực Mã OTP - WebVideo - Trịnh Văn Phú Hào (24110013)</title>
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,&lt;svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'&gt;&lt;circle cx='50' cy='50' r='50' fill='%23ff4757'/&gt;&lt;polygon points='40,30 40,70 75,50' fill='%23ffffff'/&gt;&lt;/svg&gt;">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
@@ -66,6 +68,12 @@
             <strong class="text-dark">${sessionScope.pending_user.email}</strong>
             <div class="small text-muted mt-1">(Vui lòng kiểm tra hòm thư đến hoặc mục Spam)</div>
         </div>
+
+        <c:if test="${not empty sessionScope.otpOfflineNotice}">
+            <div class="alert alert-warning text-center" role="alert">
+                <i class="fa-solid fa-triangle-exclamation me-1"></i> ${sessionScope.otpOfflineNotice}
+            </div>
+        </c:if>
 
         <c:if test="${not empty error}">
             <div class="alert alert-danger alert-dismissible fade show" role="alert">

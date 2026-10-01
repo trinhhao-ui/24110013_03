@@ -70,10 +70,16 @@
                        value="${video.poster}" placeholder="https://picsum.photos/400/250?random=123">
             </div>
 
-            <div class="col-md-4">
-                <label for="views" class="form-label fw-semibold">Lượt xem ban đầu</label>
-                <input type="number" class="form-control" id="views" name="views" 
-                       value="${video.views != null ? video.views : 0}" min="0">
+            <div class="col-md-6">
+                <label for="price" class="form-label fw-semibold">Giá bán (VNĐ) <span class="text-danger">*</span></label>
+                <input type="number" class="form-control" id="price" name="price" 
+                       value="${video.price != null ? video.price : 150000}" min="0" step="1000" required>
+            </div>
+
+            <div class="col-md-6">
+                <label for="quantity" class="form-label fw-semibold">Số lượng tồn kho (Stock) <span class="text-danger">*</span></label>
+                <input type="number" class="form-control" id="quantity" name="quantity" 
+                       value="${video.quantity != null ? video.quantity : 20}" min="0" required>
             </div>
 
             <div class="col-12">

@@ -95,12 +95,6 @@ public class AuthController_24110013 extends HttpServlet {
         // Gửi mail OTP
         boolean emailSent = EmailUtils_24110013.sendOtp(email, otp);
 
-        if (!emailSent) {
-            req.setAttribute("error", "Không thể gửi mã OTP đến email. Vui lòng kiểm tra lại địa chỉ email!");
-            req.getRequestDispatcher("/views/auth/register.jsp").forward(req, resp);
-            return;
-        }
-
         // Tạo user tạm thời (chưa active)
         User_24110013 pendingUser = new User_24110013(username, password, phone, fullname, email, false, false, images);
 
@@ -108,6 +102,12 @@ public class AuthController_24110013 extends HttpServlet {
         session.setAttribute("otp", otp);
         session.setAttribute("otp_time", System.currentTimeMillis());
         session.setAttribute("pending_user", pendingUser);
+
+        if (!emailSent) {
+            session.setAttribute("otpOfflineNotice", "Không thể gửi email qua internet (chế độ Offline). Vui lòng kiểm tra Console Server hoặc nhập mã test: " + otp);
+        } else {
+            session.removeAttribute("otpOfflineNotice");
+        }
 
         resp.sendRedirect(req.getContextPath() + "/verify-otp");
     }
@@ -140,6 +140,7 @@ public class AuthController_24110013 extends HttpServlet {
             session.removeAttribute("otp");
             session.removeAttribute("otp_time");
             session.removeAttribute("pending_user");
+            session.removeAttribute("otpOfflineNotice");
 
             resp.sendRedirect(req.getContextPath() + "/login?msg=activated");
         } else {
@@ -157,7 +158,7 @@ public class AuthController_24110013 extends HttpServlet {
         if (user == null) {
             // Kiểm tra xem do sai mật khẩu hay chưa kích hoạt
             User_24110013 existing = userService.findById(username);
-            if (existing != null && !existing.getActive()) {
+            if (existing != null && !Boolean.TRUE.equals(existing.getActive())) {
                 req.setAttribute("error", "Tài khoản của bạn chưa được kích hoạt bằng mã OTP!");
             } else {
                 req.setAttribute("error", "Tên đăng nhập hoặc mật khẩu không chính xác!");
@@ -172,7 +173,7 @@ public class AuthController_24110013 extends HttpServlet {
 
         // Theo yêu cầu Câu 2:
         // "Đăng nhập với vai trò admin thành công thì vào trang chủ của Admin, ngược lại thì quay lại trang đăng nhập."
-        if (user.getAdmin()) {
+        if (Boolean.TRUE.equals(user.getAdmin())) {
             resp.sendRedirect(req.getContextPath() + "/admin/videos");
         } else {
             // Không phải admin: quay lại trang đăng nhập theo đúng yêu cầu đề bài

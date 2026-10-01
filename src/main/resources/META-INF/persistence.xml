@@ -13,6 +13,8 @@
         <class>vn.iotstar.entity.Video_24110013</class>
         <class>vn.iotstar.entity.Favorite_24110013</class>
         <class>vn.iotstar.entity.Share_24110013</class>
+        <class>vn.iotstar.entity.Order_24110013</class>
+        <class>vn.iotstar.entity.OrderDetail_24110013</class>
 
         <properties>
             <!-- Database Connection -->
@@ -21,8 +23,8 @@
             <property name="jakarta.persistence.jdbc.user" value="sa"/>
             <property name="jakarta.persistence.jdbc.password" value="0373703896Hao@"/>
 
-            <!-- Hibernate Dialect -->
-            <property name="hibernate.dialect" value="org.hibernate.dialect.SQLServerDialect"/>
+            <!-- Hibernate 6 tự động nhận diện SQLServerDialect từ JDBC URL, bỏ cấu hình tường minh để sạch log -->
+            <!-- <property name="hibernate.dialect" value="org.hibernate.dialect.SQLServerDialect"/> -->
 
             <!-- DDL: none (Dữ liệu đã có sẵn trong SQL Server) -->
             <property name="hibernate.hbm2ddl.auto" value="none"/>

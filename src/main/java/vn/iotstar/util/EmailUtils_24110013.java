@@ -59,7 +59,12 @@ public class EmailUtils_24110013 {
             Transport.send(message);
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.println(">>> [EmailUtils] Không thể gửi email qua SMTP: " + e.getMessage());
+            System.out.println("=================================================================");
+            System.out.println(">>> [CHẾ ĐỘ OFFLINE / TEST DEMO - MÃ OTP TỰ ĐỘNG]");
+            System.out.println(">>> Người nhận: " + toEmail);
+            System.out.println(">>> Mã OTP xác thực: " + otp);
+            System.out.println("=================================================================");
             return false;
         }
     }

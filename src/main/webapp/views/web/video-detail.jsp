@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -105,8 +106,58 @@
                 </div>
 
                 <div class="mb-3">
-                    <span class="detail-meta-label">View:</span>
+                    <span class="detail-meta-label">Giá bán:</span>
+                    <span class="detail-meta-value text-danger fw-bold fs-4">
+                        <fmt:formatNumber value="${video.price}" pattern="#,##0"/> ₫
+                    </span>
+                </div>
+
+                <div class="mb-3">
+                    <span class="detail-meta-label">Tồn kho:</span>
+                    <span class="detail-meta-value">
+                        <c:choose>
+                            <c:when test="${video.quantity > 0}">
+                                <span class="badge bg-success fs-6">${video.quantity} sản phẩm có sẵn</span>
+                            </c:when>
+                            <c:otherwise>
+                                <span class="badge bg-danger fs-6">Đã hết hàng</span>
+                            </c:otherwise>
+                        </c:choose>
+                    </span>
+                </div>
+
+                <div class="mb-3">
+                    <span class="detail-meta-label">Lượt xem:</span>
                     <span class="detail-meta-value badge bg-secondary fs-6">${video.views}</span>
+                </div>
+
+                <!-- Form Thêm Vào Giỏ Hàng & Mua Ngay COD -->
+                <div class="card p-3 bg-light border-0 rounded-3 my-4">
+                    <form action="${pageContext.request.contextPath}/cart/add" method="post">
+                        <input type="hidden" name="videoId" value="${video.videoId}">
+                        <div class="row align-items-center g-3">
+                            <div class="col-auto">
+                                <label for="quantityInput" class="fw-semibold text-secondary">Số lượng:</label>
+                            </div>
+                            <div class="col-auto">
+                                <input type="number" id="quantityInput" name="quantity" value="1" min="1" max="${video.quantity}" 
+                                       class="form-control" style="width: 90px; text-align: center; font-weight: bold;" 
+                                       ${video.quantity <= 0 ? 'disabled' : ''}>
+                            </div>
+                            <div class="col-auto">
+                                <span class="text-muted small">(Tối đa ${video.quantity} sản phẩm)</span>
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-2 mt-3 flex-wrap">
+                            <button type="submit" class="btn btn-outline-danger px-4 py-2 fw-semibold" ${video.quantity <= 0 ? 'disabled' : ''}>
+                                <i class="fa-solid fa-cart-plus me-2"></i>Thêm Vào Giỏ Hàng
+                            </button>
+                            <a href="${pageContext.request.contextPath}/cart" class="btn btn-outline-primary px-3 py-2">
+                                <i class="fa-solid fa-cart-shopping me-1"></i>Xem Giỏ Hàng
+                            </a>
+                        </div>
+                    </form>
                 </div>
 
                 <!-- Thống kê & Nút Share(10), Like(10) theo yêu cầu -->

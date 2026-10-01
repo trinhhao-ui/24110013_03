@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -65,9 +66,11 @@
                     <th scope="col" style="width: 100px;">Mã Video</th>
                     <th scope="col" style="width: 100px;">Poster</th>
                     <th scope="col">Tiêu đề</th>
-                    <th scope="col" style="width: 180px;">Chuyên mục</th>
-                    <th scope="col" style="width: 100px;" class="text-center">Lượt xem</th>
-                    <th scope="col" style="width: 110px;" class="text-center">Trạng thái</th>
+                    <th scope="col" style="width: 150px;">Chuyên mục</th>
+                    <th scope="col" style="width: 110px;" class="text-end">Giá bán</th>
+                    <th scope="col" style="width: 90px;" class="text-center">Tồn kho</th>
+                    <th scope="col" style="width: 90px;" class="text-center">Lượt xem</th>
+                    <th scope="col" style="width: 100px;" class="text-center">Trạng thái</th>
                     <th scope="col" style="width: 140px;" class="text-center">Hành động</th>
                 </tr>
             </thead>
@@ -75,7 +78,7 @@
                 <c:choose>
                     <c:when test="${empty videos}">
                         <tr>
-                            <td colspan="7" class="text-center text-muted py-4">Chưa có video nào.</td>
+                            <td colspan="9" class="text-center text-muted py-4">Chưa có video nào.</td>
                         </tr>
                     </c:when>
                     <c:otherwise>
@@ -87,13 +90,21 @@
                                 </td>
                                 <td>
                                     <strong>${v.title}</strong>
-                                    <div class="text-muted small text-truncate" style="max-width: 350px;">
+                                    <div class="text-muted small text-truncate" style="max-width: 300px;">
                                         ${v.description}
                                     </div>
                                 </td>
                                 <td>
                                     <span class="badge bg-light text-dark border">
                                         ${v.category.categoryname}
+                                    </span>
+                                </td>
+                                <td class="text-end fw-bold text-danger">
+                                    <fmt:formatNumber value="${v.price}" pattern="#,##0"/> ₫
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge ${v.quantity > 0 ? 'bg-success' : 'bg-danger'}">
+                                        ${v.quantity}
                                     </span>
                                 </td>
                                 <td class="text-center">

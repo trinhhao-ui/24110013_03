@@ -6,6 +6,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><sitemesh:write property='title'>WebVideo - Trịnh Văn Phú Hào</sitemesh:write></title>
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,&lt;svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'&gt;&lt;circle cx='50' cy='50' r='50' fill='%23ff4757'/&gt;&lt;polygon points='40,30 40,70 75,50' fill='%23ffffff'/&gt;&lt;/svg&gt;">
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
@@ -93,15 +95,34 @@
                 <ul class="navbar-nav ms-auto align-items-center mb-2 mb-lg-0">
                     <!-- 1. Trang Chủ -->
                     <li class="nav-item">
-                        <a class="nav-link px-3" href="${pageContext.request.contextPath}/home">
+                        <a class="nav-link px-3 ${empty pageContext.request.servletPath or pageContext.request.servletPath eq '/home' or pageContext.request.servletPath eq '/' ? 'active' : ''}" href="${pageContext.request.contextPath}/home">
                             <i class="fa-solid fa-house me-1"></i> Trang Chủ
                         </a>
                     </li>
 
                     <!-- 2. Sản phẩm -->
                     <li class="nav-item">
-                        <a class="nav-link px-3" href="${pageContext.request.contextPath}/home">
+                        <a class="nav-link px-3 ${pageContext.request.servletPath eq '/home' ? 'active' : ''}" href="${pageContext.request.contextPath}/home">
                             <i class="fa-solid fa-film me-1"></i> Sản phẩm
+                        </a>
+                    </li>
+
+                    <!-- Giỏ hàng -->
+                    <li class="nav-item">
+                        <a class="nav-link px-3 position-relative ${pageContext.request.servletPath eq '/cart' or pageContext.request.servletPath eq '/checkout' ? 'active' : ''}" href="${pageContext.request.contextPath}/cart">
+                            <i class="fa-solid fa-cart-shopping me-1"></i> Giỏ hàng
+                            <c:if test="${not empty sessionScope.cart and sessionScope.cart.totalQuantity > 0}">
+                                <span class="badge rounded-pill bg-danger ms-1">
+                                    ${sessionScope.cart.totalQuantity}
+                                </span>
+                            </c:if>
+                        </a>
+                    </li>
+
+                    <!-- Tra cứu đơn hàng -->
+                    <li class="nav-item">
+                        <a class="nav-link px-3 ${pageContext.request.servletPath eq '/my-orders' or pageContext.request.servletPath eq '/order-detail' or pageContext.request.servletPath eq '/order-success' ? 'active' : ''}" href="${pageContext.request.contextPath}/my-orders">
+                            <i class="fa-solid fa-truck-fast me-1"></i> Đơn hàng
                         </a>
                     </li>
 
@@ -123,6 +144,17 @@
                                     <li class="dropdown-item-text text-muted small">@${sessionScope.account.username} (${sessionScope.account.admin ? 'Admin' : 'User'})</li>
                                     <li><hr class="dropdown-divider"></li>
                                     <li>
+                                        <a class="dropdown-item" href="${pageContext.request.contextPath}/my-orders">
+                                            <i class="fa-solid fa-clock-rotate-left me-2 text-primary"></i> Lịch sử đơn hàng
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="${pageContext.request.contextPath}/cart">
+                                            <i class="fa-solid fa-cart-shopping me-2 text-success"></i> Xem giỏ hàng
+                                        </a>
+                                    </li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
                                         <a class="dropdown-item text-danger" href="${pageContext.request.contextPath}/logout">
                                             <i class="fa-solid fa-right-from-bracket me-2"></i> Đăng xuất
                                         </a>
@@ -135,7 +167,7 @@
                     <!-- 4. Trang quản trị (admin mới có chức năng này) -->
                     <li class="nav-item">
                         <c:choose>
-                            <c:when test="${not empty sessionScope.account && sessionScope.account.admin}">
+                            <c:when test="${not empty sessionScope.account and sessionScope.account.admin}">
                                 <a class="nav-link admin-badge rounded px-3 ms-lg-2" href="${pageContext.request.contextPath}/admin/videos">
                                     <i class="fa-solid fa-screwdriver-wrench me-1"></i> Trang quản trị
                                 </a>
@@ -165,9 +197,9 @@
                 <div class="col-md-6 text-md-start mb-2 mb-md-0">
                     <p class="footer-info mb-1">
                         <i class="fa-solid fa-user-graduate me-2 text-warning"></i>
-                        Họ tên: <strong>Trịnh Văn Phú Hào</strong> | MSSV: <strong>24110013</strong>
+                        Họ tên: <strong>Trịnh Văn Phú Hào</strong> | MSSV: <strong>24110013</strong> | Mã đề: <strong>03</strong>
                     </p>
-                    <small class="text-secondary">Đề thi Quá trình – HK1 – 2026-2027 | Môn Lập Trình Web</small>
+                    <small class="text-secondary">Đề thi Quá trình – HK1 – 2026-2027 | Môn Lập Trình Web (Jakarta EE + JPA + Tomcat 10)</small>
                 </div>
                 <div class="col-md-6 text-md-end">
                     <span class="badge-exam">
