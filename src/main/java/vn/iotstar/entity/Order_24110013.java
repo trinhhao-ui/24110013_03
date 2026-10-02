@@ -163,21 +163,63 @@ public class Order_24110013 implements Serializable {
     }
 
     public String getStatusVietnamese() {
-        if ("PENDING".equalsIgnoreCase(status)) return "Chờ xác nhận";
-        if ("PROCESSING".equalsIgnoreCase(status)) return "Đang chuẩn bị hàng";
-        if ("SHIPPING".equalsIgnoreCase(status)) return "Đang giao hàng (COD)";
-        if ("DELIVERED".equalsIgnoreCase(status)) return "Giao thành công (Đã thu COD)";
-        if ("CANCELLED".equalsIgnoreCase(status)) return "Đã hủy đơn";
-        return status;
+        if (status == null) return "Chưa xác định";
+        String s = status.toUpperCase();
+        switch (s) {
+            case "NEW":
+            case "PENDING":
+                return "Đơn hàng mới";
+            case "CONFIRMED":
+                return "Đã xác nhận";
+            case "PREPARING":
+            case "PROCESSING":
+                return "Chuẩn bị hàng";
+            case "SHIPPING":
+                return "Vận chuyển";
+            case "DELIVERING":
+                return "Giao hàng";
+            case "DELIVERED":
+                return "Đã giao";
+            case "CANCELLED":
+                return "Đơn hàng hủy";
+            case "RETURNED":
+                return "Đơn hàng hoàn";
+            default:
+                return status;
+        }
     }
 
     public String getStatusBadgeClass() {
-        if ("PENDING".equalsIgnoreCase(status)) return "bg-warning text-dark";
-        if ("PROCESSING".equalsIgnoreCase(status)) return "bg-info text-dark";
-        if ("SHIPPING".equalsIgnoreCase(status)) return "bg-primary";
-        if ("DELIVERED".equalsIgnoreCase(status)) return "bg-success";
-        if ("CANCELLED".equalsIgnoreCase(status)) return "bg-danger";
-        return "bg-secondary";
+        if (status == null) return "bg-secondary text-white";
+        String s = status.toUpperCase();
+        switch (s) {
+            case "NEW":
+            case "PENDING":
+                return "bg-warning text-dark";
+            case "CONFIRMED":
+                return "bg-primary text-white";
+            case "PREPARING":
+            case "PROCESSING":
+                return "bg-info text-dark";
+            case "SHIPPING":
+                return "bg-secondary text-white";
+            case "DELIVERING":
+                return "bg-primary text-white";
+            case "DELIVERED":
+                return "bg-success text-white";
+            case "CANCELLED":
+                return "bg-danger text-white";
+            case "RETURNED":
+                return "bg-dark text-white";
+            default:
+                return "bg-secondary text-white";
+        }
+    }
+
+    public boolean isCancellable() {
+        if (status == null) return false;
+        String s = status.toUpperCase();
+        return "NEW".equals(s) || "PENDING".equals(s);
     }
 
     public boolean isHasInvoice() {

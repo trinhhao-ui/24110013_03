@@ -69,8 +69,10 @@ public class OrderService_24110013 implements IOrderService_24110013 {
                 order.setStatus(newStatus);
                 em.merge(order);
 
-                // Nếu chuyển từ trạng thái khác sang CANCELLED thì hoàn lại số lượng kho
-                if ("CANCELLED".equalsIgnoreCase(newStatus) && !"CANCELLED".equalsIgnoreCase(oldStatus)) {
+                // Nếu chuyển từ trạng thái khác sang CANCELLED hoặc RETURNED thì hoàn lại số lượng kho
+                boolean isCancelling = ("CANCELLED".equalsIgnoreCase(newStatus) || "RETURNED".equalsIgnoreCase(newStatus));
+                boolean wasAlreadyCancelled = ("CANCELLED".equalsIgnoreCase(oldStatus) || "RETURNED".equalsIgnoreCase(oldStatus));
+                if (isCancelling && !wasAlreadyCancelled) {
                     List<OrderDetail_24110013> details = em.createQuery(
                             "SELECT d FROM OrderDetail_24110013 d WHERE d.order.orderId = :orderId", OrderDetail_24110013.class)
                             .setParameter("orderId", orderId)
@@ -100,7 +102,7 @@ public class OrderService_24110013 implements IOrderService_24110013 {
         try {
             trans.begin();
             Order_24110013 order = em.find(Order_24110013.class, orderId);
-            if (order != null && "PENDING".equalsIgnoreCase(order.getStatus())) {
+            if (order != null && order.isCancellable()) {
                 order.setStatus("CANCELLED");
                 em.merge(order);
 
@@ -149,5 +151,43 @@ public class OrderService_24110013 implements IOrderService_24110013 {
     @Override
     public List<Order_24110013> findByStatus(String status) {
         return orderDao.findByStatus(status);
+    }
+
+    @Override
+    public List<Order_24110013> findByUsernameAndStatus(String username, String status) {
+        return orderDao.findByUsernameAndStatus(username, status);
+    }
+
+    @Override
+    public java.util.Map<String, Long> countOrdersByStatusForUser(String username) {
+        java.util.Map<String, Long> counts = new java.util.LinkedHashMap<>();
+        if (username == null || username.trim().isEmpty()) {
+            return counts;
+        }
+        counts.put("ALL", orderDao.countByUsername(username));
+        counts.put("NEW", orderDao.countByUsernameAndStatus(username, "NEW"));
+        counts.put("CONFIRMED", orderDao.countByUsernameAndStatus(username, "CONFIRMED"));
+        counts.put("PREPARING", orderDao.countByUsernameAndStatus(username, "PREPARING"));
+        counts.put("SHIPPING", orderDao.countByUsernameAndStatus(username, "SHIPPING"));
+        counts.put("DELIVERING", orderDao.countByUsernameAndStatus(username, "DELIVERING"));
+        counts.put("DELIVERED", orderDao.countByUsernameAndStatus(username, "DELIVERED"));
+        counts.put("CANCELLED", orderDao.countByUsernameAndStatus(username, "CANCELLED"));
+        counts.put("RETURNED", orderDao.countByUsernameAndStatus(username, "RETURNED"));
+        return counts;
+    }
+
+    @Override
+    public java.util.Map<String, Long> countOrdersByStatusForAdmin() {
+        java.util.Map<String, Long> counts = new java.util.LinkedHashMap<>();
+        counts.put("ALL", orderDao.countAll());
+        counts.put("NEW", orderDao.countByStatus("NEW"));
+        counts.put("CONFIRMED", orderDao.countByStatus("CONFIRMED"));
+        counts.put("PREPARING", orderDao.countByStatus("PREPARING"));
+        counts.put("SHIPPING", orderDao.countByStatus("SHIPPING"));
+        counts.put("DELIVERING", orderDao.countByStatus("DELIVERING"));
+        counts.put("DELIVERED", orderDao.countByStatus("DELIVERED"));
+        counts.put("CANCELLED", orderDao.countByStatus("CANCELLED"));
+        counts.put("RETURNED", orderDao.countByStatus("RETURNED"));
+        return counts;
     }
 }

@@ -25,6 +25,16 @@ public class AuthController_24110013 extends HttpServlet {
 
         switch (path) {
             case "/login":
+                HttpSession currentSession = req.getSession(false);
+                if (currentSession != null && currentSession.getAttribute("account") != null) {
+                    User_24110013 currentAcc = (User_24110013) currentSession.getAttribute("account");
+                    if (Boolean.TRUE.equals(currentAcc.getAdmin())) {
+                        resp.sendRedirect(req.getContextPath() + "/admin/videos");
+                    } else {
+                        resp.sendRedirect(req.getContextPath() + "/home");
+                    }
+                    return;
+                }
                 req.getRequestDispatcher("/views/auth/login.jsp").forward(req, resp);
                 break;
             case "/register":
@@ -38,6 +48,10 @@ public class AuthController_24110013 extends HttpServlet {
                 if (session != null) {
                     session.invalidate();
                 }
+                jakarta.servlet.http.Cookie cleanOrderCookie = new jakarta.servlet.http.Cookie("client_orders", "");
+                cleanOrderCookie.setMaxAge(0);
+                cleanOrderCookie.setPath("/");
+                resp.addCookie(cleanOrderCookie);
                 resp.sendRedirect(req.getContextPath() + "/login?msg=logged_out");
                 break;
             default:
@@ -171,14 +185,16 @@ public class AuthController_24110013 extends HttpServlet {
         HttpSession session = req.getSession();
         session.setAttribute("account", user);
 
-        // Theo yêu cầu Câu 2:
-        // "Đăng nhập với vai trò admin thành công thì vào trang chủ của Admin, ngược lại thì quay lại trang đăng nhập."
+        // Đăng nhập thành công -> Vào thẳng luôn
         if (Boolean.TRUE.equals(user.getAdmin())) {
             resp.sendRedirect(req.getContextPath() + "/admin/videos");
         } else {
-            // Không phải admin: quay lại trang đăng nhập theo đúng yêu cầu đề bài
-            req.setAttribute("info", "Đăng nhập thành công với vai trò User thường (không có quyền Admin). Bạn có thể truy cập Trang Chủ.");
-            req.getRequestDispatcher("/views/auth/login.jsp").forward(req, resp);
+            String redirect = req.getParameter("redirect");
+            if (redirect != null && !redirect.trim().isEmpty() && !redirect.contains("login")) {
+                resp.sendRedirect(req.getContextPath() + (redirect.startsWith("/") ? redirect : "/" + redirect));
+            } else {
+                resp.sendRedirect(req.getContextPath() + "/home");
+            }
         }
     }
 }

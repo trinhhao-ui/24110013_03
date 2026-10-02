@@ -173,7 +173,7 @@ public class CheckoutController_24110013 extends HttpServlet {
 
         boolean success = orderService.createOrder(order, details);
         if (success) {
-            // Lưu orderId vào Session
+            // Lưu orderId vào Session của phiên hiện tại
             @SuppressWarnings("unchecked")
             List<String> sessionOrders = (List<String>) session.getAttribute("session_orders");
             if (sessionOrders == null) {
@@ -181,22 +181,6 @@ public class CheckoutController_24110013 extends HttpServlet {
             }
             sessionOrders.add(orderId);
             session.setAttribute("session_orders", sessionOrders);
-
-            // Lưu orderId vào Cookie (30 ngày)
-            String cookieVal = orderId;
-            jakarta.servlet.http.Cookie[] cookies = req.getCookies();
-            if (cookies != null) {
-                for (jakarta.servlet.http.Cookie c : cookies) {
-                    if ("client_orders".equals(c.getName()) && c.getValue() != null) {
-                        cookieVal = c.getValue() + "," + orderId;
-                        break;
-                    }
-                }
-            }
-            jakarta.servlet.http.Cookie orderCookie = new jakarta.servlet.http.Cookie("client_orders", cookieVal);
-            orderCookie.setMaxAge(30 * 24 * 3600);
-            orderCookie.setPath("/");
-            resp.addCookie(orderCookie);
 
             // Xóa giỏ hàng sau khi đặt thành công
             cart.clear();

@@ -109,13 +109,52 @@ public class OrderDao_24110013 implements IOrderDao_24110013 {
         }
     }
 
+    private List<String> getEquivalentStatuses(String status) {
+        if (status == null) return List.of();
+        String s = status.toUpperCase();
+        if ("NEW".equals(s) || "PENDING".equals(s)) {
+            return List.of("NEW", "PENDING");
+        }
+        if ("PREPARING".equals(s) || "PROCESSING".equals(s)) {
+            return List.of("PREPARING", "PROCESSING");
+        }
+        return List.of(s);
+    }
+
     @Override
     public List<Order_24110013> findByStatus(String status) {
         EntityManager em = JpaConfig_24110013.getEntityManager();
         try {
+            List<String> statuses = getEquivalentStatuses(status);
             TypedQuery<Order_24110013> query = em.createQuery(
-                    "SELECT o FROM Order_24110013 o WHERE o.status = :status ORDER BY o.orderDate DESC", Order_24110013.class);
-            query.setParameter("status", status);
+                    "SELECT o FROM Order_24110013 o WHERE o.status IN :statuses ORDER BY o.orderDate DESC", Order_24110013.class);
+            query.setParameter("statuses", statuses);
+            return query.getResultList();
+        } finally {
+            em.close();
+        }
+    }
+
+    @Override
+    public List<Order_24110013> findByUsernameAndStatus(String username, String status) {
+        EntityManager em = JpaConfig_24110013.getEntityManager();
+        try {
+            vn.iotstar.entity.User_24110013 u = em.find(vn.iotstar.entity.User_24110013.class, username);
+            String fullname = (u != null && u.getFullname() != null) ? u.getFullname().trim() : "";
+            String phone = (u != null && u.getPhone() != null) ? u.getPhone().trim() : "";
+            List<String> statuses = getEquivalentStatuses(status);
+
+            TypedQuery<Order_24110013> query = em.createQuery(
+                    "SELECT DISTINCT o FROM Order_24110013 o " +
+                    "WHERE ((o.user IS NOT NULL AND o.user.username = :username) " +
+                    "   OR (:fn <> '' AND o.recipientName = :fn) " +
+                    "   OR (:ph <> '' AND o.phone = :ph)) " +
+                    "  AND o.status IN :statuses " +
+                    "ORDER BY o.orderDate DESC", Order_24110013.class);
+            query.setParameter("username", username);
+            query.setParameter("fn", fullname);
+            query.setParameter("ph", phone);
+            query.setParameter("statuses", statuses);
             return query.getResultList();
         } finally {
             em.close();
@@ -127,6 +166,67 @@ public class OrderDao_24110013 implements IOrderDao_24110013 {
         EntityManager em = JpaConfig_24110013.getEntityManager();
         try {
             TypedQuery<Long> query = em.createQuery("SELECT COUNT(o) FROM Order_24110013 o", Long.class);
+            return query.getSingleResult();
+        } finally {
+            em.close();
+        }
+    }
+
+    @Override
+    public long countByUsername(String username) {
+        EntityManager em = JpaConfig_24110013.getEntityManager();
+        try {
+            vn.iotstar.entity.User_24110013 u = em.find(vn.iotstar.entity.User_24110013.class, username);
+            String fullname = (u != null && u.getFullname() != null) ? u.getFullname().trim() : "";
+            String phone = (u != null && u.getPhone() != null) ? u.getPhone().trim() : "";
+
+            TypedQuery<Long> query = em.createQuery(
+                    "SELECT COUNT(DISTINCT o) FROM Order_24110013 o " +
+                    "WHERE (o.user IS NOT NULL AND o.user.username = :username) " +
+                    "   OR (:fn <> '' AND o.recipientName = :fn) " +
+                    "   OR (:ph <> '' AND o.phone = :ph)", Long.class);
+            query.setParameter("username", username);
+            query.setParameter("fn", fullname);
+            query.setParameter("ph", phone);
+            return query.getSingleResult();
+        } finally {
+            em.close();
+        }
+    }
+
+    @Override
+    public long countByStatus(String status) {
+        EntityManager em = JpaConfig_24110013.getEntityManager();
+        try {
+            List<String> statuses = getEquivalentStatuses(status);
+            TypedQuery<Long> query = em.createQuery(
+                    "SELECT COUNT(o) FROM Order_24110013 o WHERE o.status IN :statuses", Long.class);
+            query.setParameter("statuses", statuses);
+            return query.getSingleResult();
+        } finally {
+            em.close();
+        }
+    }
+
+    @Override
+    public long countByUsernameAndStatus(String username, String status) {
+        EntityManager em = JpaConfig_24110013.getEntityManager();
+        try {
+            vn.iotstar.entity.User_24110013 u = em.find(vn.iotstar.entity.User_24110013.class, username);
+            String fullname = (u != null && u.getFullname() != null) ? u.getFullname().trim() : "";
+            String phone = (u != null && u.getPhone() != null) ? u.getPhone().trim() : "";
+            List<String> statuses = getEquivalentStatuses(status);
+
+            TypedQuery<Long> query = em.createQuery(
+                    "SELECT COUNT(DISTINCT o) FROM Order_24110013 o " +
+                    "WHERE ((o.user IS NOT NULL AND o.user.username = :username) " +
+                    "   OR (:fn <> '' AND o.recipientName = :fn) " +
+                    "   OR (:ph <> '' AND o.phone = :ph)) " +
+                    "  AND o.status IN :statuses", Long.class);
+            query.setParameter("username", username);
+            query.setParameter("fn", fullname);
+            query.setParameter("ph", phone);
+            query.setParameter("statuses", statuses);
             return query.getSingleResult();
         } finally {
             em.close();

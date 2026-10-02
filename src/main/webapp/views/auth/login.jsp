@@ -70,18 +70,6 @@
             </div>
         </c:if>
 
-        <!-- Thông báo thông tin / cảnh báo quyền -->
-        <c:if test="${not empty info}">
-            <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                <i class="fa-solid fa-triangle-exclamation me-1"></i> ${info}
-                <div class="mt-2">
-                    <a href="${pageContext.request.contextPath}/home" class="btn btn-sm btn-primary">
-                        <i class="fa-solid fa-house me-1"></i> Vào Trang Chủ
-                    </a>
-                </div>
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        </c:if>
 
         <!-- Thông báo lỗi -->
         <c:if test="${not empty error}">
@@ -103,32 +91,10 @@
             </div>
         </c:if>
 
-        <!-- Trạng thái nếu đã đăng nhập trước đó -->
-        <c:if test="${not empty sessionScope.account}">
-            <div class="card bg-light border-0 p-3 mb-3 text-center">
-                <div class="mb-2">
-                    <i class="fa-solid fa-circle-user text-primary fa-2x"></i>
-                </div>
-                <h6 class="mb-1 fw-bold text-dark">${sessionScope.account.fullname}</h6>
-                <div class="small text-muted mb-3">@${sessionScope.account.username} (${sessionScope.account.admin ? 'Administrator' : 'Khách hàng'})</div>
-                <div class="d-flex gap-2 justify-content-center flex-wrap">
-                    <a href="${pageContext.request.contextPath}/home" class="btn btn-sm btn-primary">
-                        <i class="fa-solid fa-house me-1"></i> Vào Trang Chủ
-                    </a>
-                    <c:if test="${sessionScope.account.admin}">
-                        <a href="${pageContext.request.contextPath}/admin/videos" class="btn btn-sm btn-danger">
-                            <i class="fa-solid fa-shield-halved me-1"></i> Quản Trị Admin
-                        </a>
-                    </c:if>
-                    <a href="${pageContext.request.contextPath}/logout" class="btn btn-sm btn-outline-danger">
-                        <i class="fa-solid fa-right-from-bracket me-1"></i> Đăng xuất
-                    </a>
-                </div>
-            </div>
-            <div class="text-center text-muted small mb-2">Hoặc đăng nhập với tài khoản khác:</div>
-        </c:if>
-
         <form action="${pageContext.request.contextPath}/login" method="post">
+            <c:if test="${not empty param.redirect}">
+                <input type="hidden" name="redirect" value="${param.redirect}">
+            </c:if>
             <div class="mb-3">
                 <label for="username" class="form-label fw-semibold">Tên đăng nhập</label>
                 <div class="input-group">

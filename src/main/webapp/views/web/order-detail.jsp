@@ -173,6 +173,15 @@
                 </div>
             </div>
         </c:when>
+        <c:when test="${order.status eq 'RETURNED'}">
+            <div class="alert alert-dark border-dark d-flex align-items-center mb-4 no-print" role="alert">
+                <i class="fa-solid fa-arrow-rotate-left fs-2 text-dark me-3"></i>
+                <div>
+                    <h6 class="fw-bold mb-1">ĐƠN HÀNG HOÀN TRẢ VỀ KHO - KHÔNG PHÁT HÀNH HÓA ĐƠN</h6>
+                    <small>Đơn hàng giao không thành công hoặc đã hoàn trả về kho. Hệ thống không xuất hóa đơn cho các đơn hàng hoàn.</small>
+                </div>
+            </div>
+        </c:when>
         <c:otherwise>
             <div class="alert alert-warning border-warning d-flex align-items-center mb-4 no-print" role="alert">
                 <i class="fa-solid fa-clock-rotate-left fs-2 text-warning me-3"></i>
@@ -215,6 +224,11 @@
                         <div class="text-muted fw-semibold mb-2">ĐÃ HỦY - KHÔNG XUẤT HÓA ĐƠN</div>
                         <div>Mã đơn: <strong class="text-secondary fs-5">#${order.orderId}</strong></div>
                     </c:when>
+                    <c:when test="${order.status eq 'RETURNED'}">
+                        <h3 class="invoice-header-title mb-1 text-dark">PHIẾU ĐƠN HÀNG HOÀN TRẢ</h3>
+                        <div class="text-muted fw-semibold mb-2">ĐÃ HOÀN VỀ KHO - KHÔNG XUẤT HÓA ĐƠN</div>
+                        <div>Mã đơn: <strong class="text-secondary fs-5">#${order.orderId}</strong></div>
+                    </c:when>
                     <c:otherwise>
                         <h3 class="invoice-header-title mb-1 text-primary">PHIẾU GIAO HÀNG (COD)</h3>
                         <div class="text-muted fw-semibold mb-2">XÁC NHẬN GIAO HÀNG &amp; THU TIỀN TẬN NƠI</div>
@@ -234,7 +248,10 @@
                             <span class="stamp-paid"><i class="fa-solid fa-stamp me-1"></i>ĐÃ THU COD</span>
                         </c:when>
                         <c:when test="${order.status eq 'CANCELLED'}">
-                            <span class="badge bg-secondary">HỦY</span>
+                            <span class="badge bg-danger fs-6 px-3 py-2">HỦY</span>
+                        </c:when>
+                        <c:when test="${order.status eq 'RETURNED'}">
+                            <span class="badge bg-dark fs-6 px-3 py-2">HOÀN TRẢ</span>
                         </c:when>
                         <c:otherwise>
                             <span class="stamp-not-delivered"><i class="fa-solid fa-hourglass-half me-1"></i>CHƯA THU TIỀN</span>
@@ -448,6 +465,11 @@
                             <i class="fa-solid fa-ban me-2"></i> Không Có Hóa Đơn (Đã Hủy)
                         </button>
                     </c:when>
+                    <c:when test="${order.status eq 'RETURNED'}">
+                        <button type="button" class="btn btn-dark px-4 py-2" disabled title="Đơn hàng đã hoàn trả, không xuất hóa đơn">
+                            <i class="fa-solid fa-arrow-rotate-left me-2"></i> Không Có Hóa Đơn (Đã Hoàn)
+                        </button>
+                    </c:when>
                     <c:otherwise>
                         <button type="button" onclick="window.print()" class="btn btn-outline-primary px-4 py-2 fw-semibold">
                             <i class="fa-solid fa-print me-2"></i> In Phiếu Giao Hàng (COD)
@@ -455,11 +477,11 @@
                     </c:otherwise>
                 </c:choose>
 
-                <!-- Hủy đơn nếu còn PENDING -->
-                <c:if test="${order.status eq 'PENDING'}">
+                <!-- Hủy đơn nếu còn NEW hoặc PENDING -->
+                <c:if test="${order.isCancellable()}">
                     <a href="${pageContext.request.contextPath}/order-cancel?id=${order.orderId}" 
                        class="btn btn-outline-danger px-3 py-2"
-                       onclick="return confirm('Bạn có chắc chắn muốn hủy đơn hàng #${order.orderId}?');">
+                       onclick="return confirm('Bạn có chắc chắn muốn hủy đơn hàng #${order.orderId}? Số lượng sẽ được hoàn lại kho.');">
                         <i class="fa-solid fa-ban me-1"></i> Hủy đơn hàng này
                     </a>
                 </c:if>

@@ -12,4 +12,7 @@ public interface IOrderService_24110013 {
     List<Order_24110013> findAll();
     List<Order_24110013> findByUsername(String username);
     List<Order_24110013> findByStatus(String status);
+    List<Order_24110013> findByUsernameAndStatus(String username, String status);
+    java.util.Map<String, Long> countOrdersByStatusForUser(String username);
+    java.util.Map<String, Long> countOrdersByStatusForAdmin();
 }

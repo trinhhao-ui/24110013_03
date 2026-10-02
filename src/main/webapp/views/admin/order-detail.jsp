@@ -94,6 +94,15 @@
                 </div>
             </div>
         </c:when>
+        <c:when test="${order.status eq 'RETURNED'}">
+            <div class="alert alert-dark border-dark d-flex align-items-center mb-4 no-print" role="alert">
+                <i class="fa-solid fa-arrow-rotate-left fs-2 text-dark me-3"></i>
+                <div>
+                    <h6 class="fw-bold mb-1">ĐƠN HÀNG HOÀN TRẢ VỀ KHO - KHÔNG PHÁT HÀNH HÓA ĐƠN</h6>
+                    <small>Đơn hàng giao không thành công hoặc khách trả hàng đã hoàn về kho. Hệ thống đã tự động hoàn trả số lượng hàng vào kho.</small>
+                </div>
+            </div>
+        </c:when>
         <c:otherwise>
             <div class="alert alert-warning border-warning d-flex align-items-center mb-4 no-print" role="alert">
                 <i class="fa-solid fa-hourglass-half fs-2 text-warning me-3"></i>
@@ -127,6 +136,14 @@
                                 <i class="fa-solid fa-ban me-1"></i>ĐÃ HỦY - KHÔNG XUẤT HÓA ĐƠN
                             </div>
                         </c:when>
+                        <c:when test="${order.status eq 'RETURNED'}">
+                            <h3 class="fw-bold text-dark mb-1">
+                                <i class="fa-solid fa-arrow-rotate-left text-dark me-2"></i>PHIẾU ĐƠN HÀNG HOÀN TRẢ #${order.orderId}
+                            </h3>
+                            <div class="text-dark fw-semibold">
+                                <i class="fa-solid fa-boxes-stacked me-1"></i>ĐÃ HOÀN TRẢ KHO - KHÔNG XUẤT HÓA ĐƠN
+                            </div>
+                        </c:when>
                         <c:otherwise>
                             <h3 class="fw-bold text-primary mb-1">
                                 <i class="fa-solid fa-truck-ramp-box text-primary me-2"></i>PHIẾU GIAO HÀNG (COD) #${order.orderId}
@@ -148,11 +165,14 @@
                         <input type="hidden" name="redirectUrl" value="/admin/order-detail?id=${order.orderId}">
                         <label class="fw-bold text-secondary mb-0">Trạng thái:</label>
                         <select name="status" class="form-select form-select-sm" style="min-width: 190px;">
-                            <option value="PENDING" ${order.status eq 'PENDING' ? 'selected' : ''}>Chờ xác nhận</option>
-                            <option value="PROCESSING" ${order.status eq 'PROCESSING' ? 'selected' : ''}>Đang chuẩn bị hàng</option>
-                            <option value="SHIPPING" ${order.status eq 'SHIPPING' ? 'selected' : ''}>Đang giao hàng (COD)</option>
-                            <option value="DELIVERED" ${order.status eq 'DELIVERED' ? 'selected' : ''}>Giao thành công (Thu COD)</option>
-                            <option value="CANCELLED" ${order.status eq 'CANCELLED' ? 'selected' : ''}>Hủy đơn hàng</option>
+                            <option value="NEW" ${order.status eq 'NEW' or order.status eq 'PENDING' ? 'selected' : ''}>Đơn hàng mới</option>
+                            <option value="CONFIRMED" ${order.status eq 'CONFIRMED' ? 'selected' : ''}>Đã xác nhận</option>
+                            <option value="PREPARING" ${order.status eq 'PREPARING' or order.status eq 'PROCESSING' ? 'selected' : ''}>Chuẩn bị hàng</option>
+                            <option value="SHIPPING" ${order.status eq 'SHIPPING' ? 'selected' : ''}>Vận chuyển</option>
+                            <option value="DELIVERING" ${order.status eq 'DELIVERING' ? 'selected' : ''}>Giao hàng</option>
+                            <option value="DELIVERED" ${order.status eq 'DELIVERED' ? 'selected' : ''}>Đã giao</option>
+                            <option value="CANCELLED" ${order.status eq 'CANCELLED' ? 'selected' : ''}>Đơn hàng hủy</option>
+                            <option value="RETURNED" ${order.status eq 'RETURNED' ? 'selected' : ''}>Đơn hàng hoàn</option>
                         </select>
                         <button type="submit" class="btn btn-primary btn-sm">
                             <i class="fa-solid fa-floppy-disk me-1"></i>Cập Nhật
@@ -167,7 +187,12 @@
                         </c:when>
                         <c:when test="${order.status eq 'CANCELLED'}">
                             <button type="button" class="btn btn-secondary btn-sm" disabled title="Đơn hàng đã hủy, không xuất hóa đơn">
-                                <i class="fa-solid fa-ban me-1"></i>Không Có Hóa Đơn
+                                <i class="fa-solid fa-ban me-1"></i>Không Có Hóa Đơn (Đã Hủy)
+                            </button>
+                        </c:when>
+                        <c:when test="${order.status eq 'RETURNED'}">
+                            <button type="button" class="btn btn-dark btn-sm" disabled title="Đơn hàng đã hoàn trả, không xuất hóa đơn">
+                                <i class="fa-solid fa-arrow-rotate-left me-1"></i>Không Có Hóa Đơn (Đã Hoàn)
                             </button>
                         </c:when>
                         <c:otherwise>

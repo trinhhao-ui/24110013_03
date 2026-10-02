@@ -34,7 +34,7 @@
             letter-spacing: 0.5px;
             font-size: 1.35rem;
         }
-        .nav-link {
+        .navbar-custom .nav-link {
             font-weight: 500;
             color: rgba(255, 255, 255, 0.9) !important;
             transition: all 0.2s ease;
@@ -42,11 +42,11 @@
             padding: 8px 14px !important;
             border-radius: 6px;
         }
-        .nav-link:hover {
+        .navbar-custom .nav-link:hover {
             color: #fff !important;
             background: rgba(255, 255, 255, 0.15);
         }
-        .nav-link.active {
+        .navbar-custom .nav-link.active {
             background: rgba(255, 255, 255, 0.25);
             color: #fff !important;
         }

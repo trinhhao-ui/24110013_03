@@ -31,27 +31,36 @@
         </div>
     </c:if>
 
-    <!-- Filter Bar -->
+    <!-- Filter Bar: 8 Trạng Thái Nghiệp Vụ -->
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-body p-2 d-flex flex-wrap gap-2 align-items-center">
             <span class="fw-semibold text-secondary me-2 ms-2"><i class="fa-solid fa-filter me-1"></i>Lọc trạng thái:</span>
             <a href="${pageContext.request.contextPath}/admin/orders" class="btn btn-sm ${empty currentStatus or currentStatus eq 'ALL' ? 'btn-dark' : 'btn-outline-secondary'}">
-                Tất cả
+                Tất cả <c:if test="${not empty statusCounts['ALL']}"><span class="badge bg-light text-dark ms-1">${statusCounts['ALL']}</span></c:if>
             </a>
-            <a href="${pageContext.request.contextPath}/admin/orders?status=PENDING" class="btn btn-sm ${currentStatus eq 'PENDING' ? 'btn-warning text-dark' : 'btn-outline-warning text-dark'}">
-                Chờ xác nhận
+            <a href="${pageContext.request.contextPath}/admin/orders?status=NEW" class="btn btn-sm ${currentStatus eq 'NEW' or currentStatus eq 'PENDING' ? 'btn-warning text-dark' : 'btn-outline-warning text-dark'}">
+                Đơn hàng mới <c:if test="${not empty statusCounts['NEW'] && statusCounts['NEW'] > 0}"><span class="badge bg-warning text-dark ms-1">${statusCounts['NEW']}</span></c:if>
             </a>
-            <a href="${pageContext.request.contextPath}/admin/orders?status=PROCESSING" class="btn btn-sm ${currentStatus eq 'PROCESSING' ? 'btn-info text-dark' : 'btn-outline-info text-dark'}">
-                Đang chuẩn bị
+            <a href="${pageContext.request.contextPath}/admin/orders?status=CONFIRMED" class="btn btn-sm ${currentStatus eq 'CONFIRMED' ? 'btn-primary' : 'btn-outline-primary'}">
+                Đã xác nhận <c:if test="${not empty statusCounts['CONFIRMED'] && statusCounts['CONFIRMED'] > 0}"><span class="badge bg-primary ms-1">${statusCounts['CONFIRMED']}</span></c:if>
             </a>
-            <a href="${pageContext.request.contextPath}/admin/orders?status=SHIPPING" class="btn btn-sm ${currentStatus eq 'SHIPPING' ? 'btn-primary' : 'btn-outline-primary'}">
-                Đang giao hàng
+            <a href="${pageContext.request.contextPath}/admin/orders?status=PREPARING" class="btn btn-sm ${currentStatus eq 'PREPARING' or currentStatus eq 'PROCESSING' ? 'btn-info text-dark' : 'btn-outline-info text-dark'}">
+                Chuẩn bị hàng <c:if test="${not empty statusCounts['PREPARING'] && statusCounts['PREPARING'] > 0}"><span class="badge bg-info text-dark ms-1">${statusCounts['PREPARING']}</span></c:if>
+            </a>
+            <a href="${pageContext.request.contextPath}/admin/orders?status=SHIPPING" class="btn btn-sm ${currentStatus eq 'SHIPPING' ? 'btn-secondary' : 'btn-outline-secondary'}">
+                Vận chuyển <c:if test="${not empty statusCounts['SHIPPING'] && statusCounts['SHIPPING'] > 0}"><span class="badge bg-secondary ms-1">${statusCounts['SHIPPING']}</span></c:if>
+            </a>
+            <a href="${pageContext.request.contextPath}/admin/orders?status=DELIVERING" class="btn btn-sm ${currentStatus eq 'DELIVERING' ? 'btn-primary' : 'btn-outline-primary'}">
+                Giao hàng <c:if test="${not empty statusCounts['DELIVERING'] && statusCounts['DELIVERING'] > 0}"><span class="badge bg-primary ms-1">${statusCounts['DELIVERING']}</span></c:if>
             </a>
             <a href="${pageContext.request.contextPath}/admin/orders?status=DELIVERED" class="btn btn-sm ${currentStatus eq 'DELIVERED' ? 'btn-success' : 'btn-outline-success'}">
-                Giao thành công (Thu COD)
+                Đã giao <c:if test="${not empty statusCounts['DELIVERED'] && statusCounts['DELIVERED'] > 0}"><span class="badge bg-success ms-1">${statusCounts['DELIVERED']}</span></c:if>
             </a>
             <a href="${pageContext.request.contextPath}/admin/orders?status=CANCELLED" class="btn btn-sm ${currentStatus eq 'CANCELLED' ? 'btn-danger' : 'btn-outline-danger'}">
-                Đã hủy
+                Đơn hàng hủy <c:if test="${not empty statusCounts['CANCELLED'] && statusCounts['CANCELLED'] > 0}"><span class="badge bg-danger ms-1">${statusCounts['CANCELLED']}</span></c:if>
+            </a>
+            <a href="${pageContext.request.contextPath}/admin/orders?status=RETURNED" class="btn btn-sm ${currentStatus eq 'RETURNED' ? 'btn-dark' : 'btn-outline-dark'}">
+                Đơn hàng hoàn <c:if test="${not empty statusCounts['RETURNED'] && statusCounts['RETURNED'] > 0}"><span class="badge bg-dark ms-1">${statusCounts['RETURNED']}</span></c:if>
             </a>
         </div>
     </div>
@@ -133,11 +142,14 @@
                                             <input type="hidden" name="orderId" value="${o.orderId}">
                                             <input type="hidden" name="redirectUrl" value="/admin/orders<c:if test='${not empty currentStatus}'>?status=${currentStatus}</c:if>">
                                             <select name="status" class="form-select form-select-sm" style="width: auto;">
-                                                <option value="PENDING" ${o.status eq 'PENDING' ? 'selected' : ''}>Chờ xác nhận</option>
-                                                <option value="PROCESSING" ${o.status eq 'PROCESSING' ? 'selected' : ''}>Đang chuẩn bị</option>
-                                                <option value="SHIPPING" ${o.status eq 'SHIPPING' ? 'selected' : ''}>Đang giao (COD)</option>
-                                                <option value="DELIVERED" ${o.status eq 'DELIVERED' ? 'selected' : ''}>Giao thành công (Thu COD)</option>
-                                                <option value="CANCELLED" ${o.status eq 'CANCELLED' ? 'selected' : ''}>Hủy đơn</option>
+                                                <option value="NEW" ${o.status eq 'NEW' or o.status eq 'PENDING' ? 'selected' : ''}>Đơn hàng mới</option>
+                                                <option value="CONFIRMED" ${o.status eq 'CONFIRMED' ? 'selected' : ''}>Đã xác nhận</option>
+                                                <option value="PREPARING" ${o.status eq 'PREPARING' or o.status eq 'PROCESSING' ? 'selected' : ''}>Chuẩn bị hàng</option>
+                                                <option value="SHIPPING" ${o.status eq 'SHIPPING' ? 'selected' : ''}>Vận chuyển</option>
+                                                <option value="DELIVERING" ${o.status eq 'DELIVERING' ? 'selected' : ''}>Giao hàng</option>
+                                                <option value="DELIVERED" ${o.status eq 'DELIVERED' ? 'selected' : ''}>Đã giao</option>
+                                                <option value="CANCELLED" ${o.status eq 'CANCELLED' ? 'selected' : ''}>Đơn hàng hủy</option>
+                                                <option value="RETURNED" ${o.status eq 'RETURNED' ? 'selected' : ''}>Đơn hàng hoàn</option>
                                             </select>
                                             <button type="submit" class="btn btn-sm btn-outline-primary" title="Lưu trạng thái">
                                                 <i class="fa-solid fa-floppy-disk"></i>

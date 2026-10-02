@@ -35,7 +35,7 @@ public class OrderController_24110013 extends HttpServlet {
                 if (order != null) {
                     if (user != null && order.getUser() != null && !user.getUsername().equals(order.getUser().getUsername()) && !Boolean.TRUE.equals(user.getAdmin())) {
                         req.getSession().setAttribute("orderError", "Bạn không có quyền hủy đơn hàng này!");
-                    } else if (!"PENDING".equalsIgnoreCase(order.getStatus())) {
+                    } else if (!order.isCancellable()) {
                         req.getSession().setAttribute("orderError", "Đơn hàng đang ở trạng thái \"" + order.getStatusVietnamese() + "\" nên không thể tự hủy!");
                     } else {
                         boolean ok = orderService.cancelOrder(orderId);
@@ -67,43 +67,38 @@ public class OrderController_24110013 extends HttpServlet {
             return;
         }
 
-        // /my-orders
+        // /my-orders: Lọc theo 8 trạng thái
+        String statusFilter = req.getParameter("status");
+        if (statusFilter != null) {
+            statusFilter = statusFilter.trim();
+            if (statusFilter.isEmpty() || "ALL".equalsIgnoreCase(statusFilter)) {
+                statusFilter = null;
+            }
+        }
+
         List<Order_24110013> orders = new ArrayList<>();
+        java.util.Map<String, Long> statusCounts = new java.util.LinkedHashMap<>();
+
         if (user != null) {
-            orders = orderService.findByUsername(user.getUsername());
-        }
-
-        // Bổ sung các đơn hàng đã đặt trong phiên làm việc hoặc lưu trong Cookie (dành cho khách vãng lai hoặc đổi tài khoản)
-        java.util.Set<String> extraOrderIds = new java.util.LinkedHashSet<>();
-        @SuppressWarnings("unchecked")
-        List<String> sessionOrders = (session != null) ? (List<String>) session.getAttribute("session_orders") : null;
-        if (sessionOrders != null) {
-            extraOrderIds.addAll(sessionOrders);
-        }
-
-        jakarta.servlet.http.Cookie[] cookies = req.getCookies();
-        if (cookies != null) {
-            for (jakarta.servlet.http.Cookie c : cookies) {
-                if ("client_orders".equals(c.getName()) && c.getValue() != null) {
-                    String[] ids = c.getValue().split(",");
-                    for (String id : ids) {
-                        if (!id.trim().isEmpty()) {
-                            extraOrderIds.add(id.trim());
-                        }
-                    }
-                }
+            statusCounts = orderService.countOrdersByStatusForUser(user.getUsername());
+            if (statusFilter != null) {
+                orders = orderService.findByUsernameAndStatus(user.getUsername(), statusFilter);
+            } else {
+                orders = orderService.findByUsername(user.getUsername());
             }
         }
 
-        for (String id : extraOrderIds) {
-            boolean already = orders.stream().anyMatch(o -> o.getOrderId().equalsIgnoreCase(id));
-            if (!already) {
-                Order_24110013 extraOrder = orderService.findById(id);
-                if (extraOrder != null) {
-                    orders.add(extraOrder);
-                }
-            }
-        }
+        // Xóa sạch cookie client_orders cũ (nếu có trong trình duyệt) để bảo mật thông tin, không rò rỉ đơn hàng khi chưa đăng nhập
+        jakarta.servlet.http.Cookie cleanCookie = new jakarta.servlet.http.Cookie("client_orders", "");
+        cleanCookie.setMaxAge(0);
+        cleanCookie.setPath("/");
+        resp.addCookie(cleanCookie);
+
+        // Sắp xếp đơn mới nhất lên đầu
+        orders.sort((o1, o2) -> {
+            if (o1.getOrderDate() == null || o2.getOrderDate() == null) return 0;
+            return o2.getOrderDate().compareTo(o1.getOrderDate());
+        });
 
         // Lấy thông báo từ session nếu có
         if (session != null && session.getAttribute("orderSuccess") != null) {
@@ -116,6 +111,8 @@ public class OrderController_24110013 extends HttpServlet {
         }
 
         req.setAttribute("orders", orders);
+        req.setAttribute("currentStatus", statusFilter != null ? statusFilter.toUpperCase() : "ALL");
+        req.setAttribute("statusCounts", statusCounts);
         req.getRequestDispatcher("/views/web/my-orders.jsp").forward(req, resp);
     }
 

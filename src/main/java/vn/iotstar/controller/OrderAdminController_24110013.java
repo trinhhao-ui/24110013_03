@@ -69,6 +69,8 @@ public class OrderAdminController_24110013 extends HttpServlet {
             orders = orderService.findAll();
         }
 
+        java.util.Map<String, Long> statusCounts = orderService.countOrdersByStatusForAdmin();
+
         // Lấy thông báo nếu có
         HttpSession session = req.getSession(false);
         if (session != null && session.getAttribute("adminOrderMsg") != null) {
@@ -77,7 +79,8 @@ public class OrderAdminController_24110013 extends HttpServlet {
         }
 
         req.setAttribute("orders", orders);
-        req.setAttribute("currentStatus", statusFilter);
+        req.setAttribute("currentStatus", (statusFilter != null && !statusFilter.trim().isEmpty()) ? statusFilter.trim().toUpperCase() : "ALL");
+        req.setAttribute("statusCounts", statusCounts);
         req.getRequestDispatcher("/views/admin/order-list.jsp").forward(req, resp);
     }
 

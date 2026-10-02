@@ -11,5 +11,9 @@ public interface IOrderDao_24110013 {
     List<Order_24110013> findAll();
     List<Order_24110013> findByUsername(String username);
     List<Order_24110013> findByStatus(String status);
+    List<Order_24110013> findByUsernameAndStatus(String username, String status);
     long countAll();
+    long countByUsername(String username);
+    long countByStatus(String status);
+    long countByUsernameAndStatus(String username, String status);
 }
